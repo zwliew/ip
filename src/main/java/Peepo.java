@@ -5,6 +5,15 @@ public class Peepo {
   private static final String LINE = "    ____________________________________________________________";
   private static final String INDENT = "     ";
 
+  private static <T extends Task> void addTask(
+      ArrayList<Task> texts, T task) {
+    texts.add(task);
+
+    System.out.println(INDENT + "Got it. I've added this task:");
+    System.out.println(INDENT + "  " + task.toString());
+    System.out.println(INDENT + "Now you have " + texts.size() + " tasks in the list.");
+  }
+
   public static void main(String[] args) {
     System.out.println(LINE);
     System.out.println(INDENT + "Hi! I'm Peepo.");
@@ -41,20 +50,12 @@ public class Peepo {
         } else if (input.startsWith("todo ")) {
           final var description = input.substring(5);
           final var task = new Todo(description);
-          texts.add(task);
-
-          System.out.println(INDENT + "Got it. I've added this task:");
-          System.out.println(INDENT + "  " + task.toString());
-          System.out.println(INDENT + "Now you have " + texts.size() + " tasks in the list.");
+          addTask(texts, task);
         } else if (input.startsWith("deadline ")) {
           final var text = input.substring(9).split(" /by ");
           assert text.length == 2;
           final var task = new Deadline(text[0], text[1]);
-          texts.add(task);
-
-          System.out.println(INDENT + "Got it. I've added this task:");
-          System.out.println(INDENT + "  " + task.toString());
-          System.out.println(INDENT + "Now you have " + texts.size() + " tasks in the list.");
+          addTask(texts, task);
         } else if (input.startsWith("event ")) {
           var text = input.substring(6).split(" /from ");
           assert text.length == 2;
@@ -62,11 +63,16 @@ public class Peepo {
           text = text[1].split(" /to ");
           assert text.length == 2;
           final var task = new Event(desc, text[0], text[1]);
-          texts.add(task);
-
-          System.out.println(INDENT + "Got it. I've added this task:");
+          addTask(texts, task);
+        } else if (input.startsWith("delete ")) {
+          final var idx = Integer.parseInt(input.substring(7)) - 1;
+          assert idx >= 0 && idx < texts.size();
+          final var task = texts.remove(idx);
+          System.out.println(INDENT + "Noted. I've removed this task:");
           System.out.println(INDENT + "  " + task.toString());
           System.out.println(INDENT + "Now you have " + texts.size() + " tasks in the list.");
+        } else {
+          System.out.println(INDENT + "OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
         System.out.println(LINE + '\n');
       }
