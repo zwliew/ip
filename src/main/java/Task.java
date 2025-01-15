@@ -1,4 +1,4 @@
-public final class Task {
+public abstract class Task {
   protected boolean isDone;
   protected String description;
 
@@ -17,5 +17,10 @@ public final class Task {
 
   public String getStatusIcon() {
     return isDone ? "X" : " ";
+  }
+
+  @Override
+  public String toString() {
+    return "[" + getStatusIcon() + "] " + description;
   }
 }
