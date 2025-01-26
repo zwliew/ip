@@ -34,10 +34,10 @@ public class Peepo {
     printLns("Bye. Hope to see you again soon!");
   }
 
-  public void handleInput(String input) throws PeepoException, IOException {
+  public void handleInput(String input) throws PeepoException {
     final var parts = input.split(" ", 2);
     final var cmd = parts[0];
-    final var rest = parts.length == 2 ? parts[1] : "";
+    final var rest = parts.length == 2 ? parts[1].strip() : "";
 
     StringBuilder sb = new StringBuilder();
     if (cmd.equals("list")) {
@@ -94,7 +94,11 @@ public class Peepo {
       printLns(sb.toString());
     }
 
-    SaveFile.saveToFile(texts);
+    try {
+      SaveFile.saveToFile(texts);
+    } catch (IOException e) {
+      throw new PeepoException("Failed to save tasks to file, continuing.");
+    }
   }
 
   private static void printError(Peepo peepo, String message) {
@@ -117,7 +121,7 @@ public class Peepo {
       for (String input = scanner.nextLine(); !input.equals("bye"); input = scanner.nextLine()) {
         try {
           peepo.handleInput(input);
-        } catch (PeepoException | IOException e) {
+        } catch (PeepoException e) {
           printError(peepo, e.getMessage());
         }
       }

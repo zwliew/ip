@@ -1,17 +1,22 @@
-public final class Event extends Task {
-  protected String from;
-  protected String to;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
-  public Event(String description, String from, String to) {
-    super(description);
-    this.from = from;
-    this.to = to;
+public final class Event extends Task {
+  protected LocalDate from;
+  protected LocalDate to;
+
+  public Event(String description, String from, String to) throws PeepoException {
+    super(description, false);
   }
 
-  public Event(String description, String from, String to, boolean isDone) {
+  public Event(String description, String from, String to, boolean isDone) throws PeepoException {
     super(description, isDone);
-    this.from = from;
-    this.to = to;
+    try {
+      this.from = LocalDate.parse(from);
+      this.to = LocalDate.parse(to);
+    } catch (DateTimeParseException e) {
+      throw new PeepoException("The date format is invalid. Please use yyyy-mm-dd.");
+    }
   }
 
   public static Event fromInput(String input) throws PeepoException {

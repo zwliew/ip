@@ -1,14 +1,20 @@
-public final class Deadline extends Task {
-  protected String by;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
-  public Deadline(String description, String by) {
-    super(description);
-    this.by = by;
+public final class Deadline extends Task {
+  protected LocalDate by;
+
+  public Deadline(String description, String by) throws PeepoException {
+    super(description, false);
   }
 
-  public Deadline(String description, String by, boolean isDone) {
+  public Deadline(String description, String by, boolean isDone) throws PeepoException {
     super(description, isDone);
-    this.by = by;
+    try {
+      this.by = LocalDate.parse(by);
+    } catch (DateTimeParseException e) {
+      throw new PeepoException("The date format is invalid. Please use yyyy-mm-dd.");
+    }
   }
 
   public static Deadline fromInput(String input) throws PeepoException {
