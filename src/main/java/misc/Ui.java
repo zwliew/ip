@@ -3,6 +3,8 @@ package misc;
 import task.Task;
 import task.TaskList;
 
+import java.util.List;
+
 public class Ui {
     private static final String LINE = "    ____________________________________________________________";
     private static final String INDENT = "     ";
@@ -83,5 +85,15 @@ public class Ui {
      */
     public void showErr(String message) {
         show(String.format("OOPS!!! %s", message));
+    }
+
+    public void showFoundTasks(List<Task> foundTasks) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Here are the matching tasks in your list:\n");
+        int i = 0;
+        for (final var task : foundTasks) {
+            sb.append(++i).append(". ").append(task.toString()).append('\n');
+        }
+        show(sb.toString());
     }
 }

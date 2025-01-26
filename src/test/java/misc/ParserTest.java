@@ -28,6 +28,9 @@ public class ParserTest {
             final var byeCmd = (ByeCommand) Parser.parse("bye");
             assertInstanceOf(ByeCommand.class, byeCmd);
 
+            final var findCmd = (FindCommand) Parser.parse("find a");
+            assertInstanceOf(FindCommand.class, findCmd);
+
             final var todoCmd = (TaskCommand) Parser.parse("todo i want to do a todo today to-doo-doo");
             assertInstanceOf(Todo.class, todoCmd.getTask());
 

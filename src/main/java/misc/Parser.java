@@ -27,6 +27,7 @@ public class Parser {
             case "deadline" -> new TaskCommand(Deadline.fromInput(rest));
             case "event" -> new TaskCommand(Event.fromInput(rest));
             case "delete" -> new DeleteCommand(Integer.parseInt(rest) - 1);
+            case "find" -> new FindCommand(rest);
             case "bye" -> new ByeCommand();
             default -> throw new PeepoException("I'm sorry, but I don't know what that means.");
         };

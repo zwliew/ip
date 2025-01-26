@@ -4,6 +4,8 @@ import misc.PeepoException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TaskList implements Iterable<Task> {
     private final ArrayList<Task> tasks;
@@ -65,5 +67,9 @@ public class TaskList implements Iterable<Task> {
                 return tasks.get(idx++);
             }
         };
+    }
+
+    public List<Task> find(String term) {
+        return tasks.stream().filter(task -> task.description.contains(term)).collect(Collectors.toList());
     }
 }
