@@ -19,4 +19,8 @@ public class UnmarkCommand implements Command {
         ui.showUnmarkTaskConfirmation(task);
         return false;
     }
+
+    public int getIdx() {
+        return idx;
+    }
 }

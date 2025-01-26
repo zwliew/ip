@@ -20,4 +20,8 @@ public class TaskCommand implements Command {
         ui.showTaskConfirmation(task, tasks.size());
         return false;
     }
+
+    public Task getTask() {
+        return task;
+    }
 }

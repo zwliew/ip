@@ -19,4 +19,8 @@ public class DeleteCommand implements Command {
         ui.showDeleteConfirmation(task, tasks.size());
         return false;
     }
+
+    public int getIdx() {
+        return idx;
+    }
 }

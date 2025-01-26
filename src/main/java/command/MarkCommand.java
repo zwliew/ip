@@ -19,4 +19,8 @@ public class MarkCommand implements Command {
         ui.showMarkTaskConfirmation(task);
         return false;
     }
+
+    public int getIdx() {
+        return idx;
+    }
 }
