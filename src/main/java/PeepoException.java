@@ -1,5 +1,5 @@
 class PeepoException extends Exception {
-  public PeepoException(String message) {
-    super(message);
-  }
+    public PeepoException(String message) {
+        super(message);
+    }
 }
