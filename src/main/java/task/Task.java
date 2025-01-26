@@ -1,3 +1,7 @@
+package task;
+
+import misc.PeepoException;
+
 public abstract class Task {
     protected boolean isDone;
     protected String description;

@@ -1,3 +1,10 @@
+package misc;
+
+import command.*;
+import task.Deadline;
+import task.Event;
+import task.Todo;
+
 public class Parser {
     public static Command parse(String input) throws PeepoException {
         final var parts = input.split(" ", 2);

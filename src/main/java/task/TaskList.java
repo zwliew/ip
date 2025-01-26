@@ -1,3 +1,7 @@
+package task;
+
+import misc.PeepoException;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
