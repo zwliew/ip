@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,15 +6,16 @@ public class Peepo {
   private static final String LINE = "    ____________________________________________________________";
   private static final String INDENT = "     ";
 
-  private final ArrayList<Task> texts = new ArrayList<>();
+  private ArrayList<Task> texts;
+
+  public Peepo(ArrayList<Task> texts) {
+    this.texts = texts;
+  }
 
   private <T extends Task> void addTask(ArrayList<Task> texts, T task) {
     texts.add(task);
     printLns(String.format("Got it. I've added this task:\n  %s\nNow you have %d tasks in the list.", task.toString(),
         texts.size()));
-  }
-
-  public Peepo() {
   }
 
   private void printLns(String lines) {
@@ -32,7 +34,7 @@ public class Peepo {
     printLns("Bye. Hope to see you again soon!");
   }
 
-  public void handleInput(String input) throws PeepoException {
+  public void handleInput(String input) throws PeepoException, IOException {
     final var parts = input.split(" ", 2);
     final var cmd = parts[0];
     final var rest = parts.length == 2 ? parts[1] : "";
@@ -44,7 +46,11 @@ public class Peepo {
         final var task = texts.get(i);
         sb.append(i + 1).append(". ").append(task.toString()).append('\n');
       }
-    } else if (cmd.equals("mark")) {
+      printLns(sb.toString());
+      return;
+    }
+
+    if (cmd.equals("mark")) {
       final var idx = Integer.parseInt(rest) - 1;
       if (idx < 0 || idx >= texts.size()) {
         throw new PeepoException("The task number is out of range.");
@@ -87,17 +93,32 @@ public class Peepo {
     if (sb.length() > 0) {
       printLns(sb.toString());
     }
+
+    SaveFile.saveToFile(texts);
+  }
+
+  private static void printError(Peepo peepo, String message) {
+    peepo.printLns(String.format("OOPS!!! %s", message));
   }
 
   public static void main(String[] args) {
-    Peepo peepo = new Peepo();
+
+    ArrayList<Task> tasks;
+    try {
+      tasks = SaveFile.loadFromFile();
+    } catch (PeepoException | IOException e) {
+      System.out.println("Failed to load tasks from file, falling back to empty list: " + e.getMessage());
+      tasks = new ArrayList<>();
+    }
+
+    Peepo peepo = new Peepo(tasks);
     peepo.hello();
     try (Scanner scanner = new Scanner(System.in)) {
       for (String input = scanner.nextLine(); !input.equals("bye"); input = scanner.nextLine()) {
         try {
           peepo.handleInput(input);
-        } catch (PeepoException e) {
-          peepo.printLns(String.format("OOPS!!! %s", e.getMessage()));
+        } catch (PeepoException | IOException e) {
+          printError(peepo, e.getMessage());
         }
       }
     }
