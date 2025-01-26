@@ -16,3 +16,7 @@ bin/
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
 *.class
+
+/data/peepo.txt
+/src/main/java/data/peepo.txt
+/text-ui-test/data/peepo.txt

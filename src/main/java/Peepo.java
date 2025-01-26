@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,94 +6,122 @@ public class Peepo {
   private static final String LINE = "    ____________________________________________________________";
   private static final String INDENT = "     ";
 
-  private static <T extends Task> void addTask(
-      ArrayList<Task> texts, T task) {
-    texts.add(task);
+  private ArrayList<Task> texts;
 
-    System.out.println(INDENT + "Got it. I've added this task:");
-    System.out.println(INDENT + "  " + task.toString());
-    System.out.println(INDENT + "Now you have " + texts.size() + " tasks in the list.");
+  public Peepo(ArrayList<Task> texts) {
+    this.texts = texts;
+  }
+
+  private <T extends Task> void addTask(ArrayList<Task> texts, T task) {
+    texts.add(task);
+    printLns(String.format("Got it. I've added this task:\n  %s\nNow you have %d tasks in the list.", task.toString(),
+        texts.size()));
+  }
+
+  private void printLns(String lines) {
+    System.out.println(LINE);
+    for (var line : lines.split("\n")) {
+      System.out.println(INDENT + line);
+    }
+    System.out.println(LINE + '\n');
+  }
+
+  public void hello() {
+    printLns("Hi! I'm Peepo.\nWhat can I do for you?");
+  }
+
+  public void farewell() {
+    printLns("Bye. Hope to see you again soon!");
+  }
+
+  public void handleInput(String input) throws PeepoException, IOException {
+    final var parts = input.split(" ", 2);
+    final var cmd = parts[0];
+    final var rest = parts.length == 2 ? parts[1] : "";
+
+    StringBuilder sb = new StringBuilder();
+    if (cmd.equals("list")) {
+      sb.append("Here are the tasks in your list:\n");
+      for (int i = 0; i < texts.size(); i++) {
+        final var task = texts.get(i);
+        sb.append(i + 1).append(". ").append(task.toString()).append('\n');
+      }
+      printLns(sb.toString());
+      return;
+    }
+
+    if (cmd.equals("mark")) {
+      final var idx = Integer.parseInt(rest) - 1;
+      if (idx < 0 || idx >= texts.size()) {
+        throw new PeepoException("The task number is out of range.");
+      }
+      final var task = texts.get(idx);
+      task.markAsDone();
+      sb.append("Nice! I've marked this task as done:\n");
+      sb.append("  ").append(task.toString());
+    } else if (cmd.equals("unmark")) {
+      final var idx = Integer.parseInt(rest) - 1;
+      if (idx < 0 || idx >= texts.size()) {
+        throw new PeepoException("The task number is out of range.");
+      }
+      final var task = texts.get(idx);
+      task.markAsUndone();
+      sb.append("OK, I've marked this task as not done yet:\n");
+      sb.append("  ").append(task.toString());
+    } else if (cmd.equals("todo")) {
+      final var todo = Todo.fromInput(rest);
+      addTask(texts, todo);
+    } else if (cmd.equals("deadline")) {
+      final var deadline = Deadline.fromInput(rest);
+      addTask(texts, deadline);
+    } else if (cmd.equals("event")) {
+      final var event = Event.fromInput(rest);
+      addTask(texts, event);
+    } else if (cmd.equals("delete")) {
+      final var idx = Integer.parseInt(rest) - 1;
+      if (idx < 0 || idx >= texts.size()) {
+        throw new PeepoException("The task number is out of range.");
+      }
+      final var task = texts.remove(idx);
+      sb.append("Noted. I've removed this task:\n");
+      sb.append("  ").append(task.toString()).append('\n');
+      sb.append("Now you have ").append(texts.size()).append(" tasks in the list.");
+    } else {
+      throw new PeepoException("I'm sorry, but I don't know what that means.");
+    }
+
+    if (sb.length() > 0) {
+      printLns(sb.toString());
+    }
+
+    SaveFile.saveToFile(texts);
+  }
+
+  private static void printError(Peepo peepo, String message) {
+    peepo.printLns(String.format("OOPS!!! %s", message));
   }
 
   public static void main(String[] args) {
-    System.out.println(LINE);
-    System.out.println(INDENT + "Hi! I'm Peepo.");
-    System.out.println(INDENT + "What can I do for you?");
-    System.out.println(LINE + '\n');
 
-    final ArrayList<Task> texts = new ArrayList<>();
+    ArrayList<Task> tasks;
+    try {
+      tasks = SaveFile.loadFromFile();
+    } catch (PeepoException | IOException e) {
+      System.out.println("Failed to load tasks from file, falling back to empty list: " + e.getMessage());
+      tasks = new ArrayList<>();
+    }
 
+    Peepo peepo = new Peepo(tasks);
+    peepo.hello();
     try (Scanner scanner = new Scanner(System.in)) {
-      for (String input = scanner.nextLine(); !"bye".equals(input); input = scanner.nextLine()) {
-        System.out.println(LINE);
+      for (String input = scanner.nextLine(); !input.equals("bye"); input = scanner.nextLine()) {
         try {
-          if ("list".equals(input)) {
-            System.out.println(INDENT + "Here are the tasks in your list:");
-            for (int i = 0; i < texts.size(); i++) {
-              final var task = texts.get(i);
-              System.out.println(INDENT + (i + 1) + ". " + task.toString());
-            }
-          } else if (input.startsWith("mark ")) {
-            final var idx = Integer.parseInt(input.substring(5)) - 1;
-            if (idx < 0 || idx >= texts.size()) {
-              throw new PeepoException("The task number is out of range.");
-            }
-            final var task = texts.get(idx);
-            task.markAsDone();
-            System.out.println(INDENT + "Nice! I've marked this task as done:");
-            System.out.println(INDENT + "  " + task.toString());
-          } else if (input.startsWith("unmark ")) {
-            final var idx = Integer.parseInt(input.substring(7)) - 1;
-            if (idx < 0 || idx >= texts.size()) {
-              throw new PeepoException("The task number is out of range.");
-            }
-            final var task = texts.get(idx);
-            task.markAsUndone();
-            System.out.println(INDENT + "OK, I've marked this task as not done yet:");
-            System.out.println(INDENT + "  " + task.toString());
-          } else if (input.startsWith("todo ")) {
-            final var description = input.substring(5);
-            final var task = new Todo(description);
-            addTask(texts, task);
-          } else if (input.startsWith("deadline ")) {
-            final var text = input.substring(9).split(" /by ");
-            if (text.length != 2) {
-              throw new PeepoException("The description and deadline of a deadline cannot be empty.");
-            }
-            final var task = new Deadline(text[0], text[1]);
-            addTask(texts, task);
-          } else if (input.startsWith("event ")) {
-            var text = input.substring(6).split(" /from ");
-            if (text.length < 2) {
-              throw new PeepoException("The description, start, and end time of an event cannot be empty.");
-            }
-            final var desc = text[0];
-            text = text[1].split(" /to ");
-            if (text.length < 2) {
-              throw new PeepoException("The description, start, and end time of an event cannot be empty.");
-            }
-            final var task = new Event(desc, text[0], text[1]);
-            addTask(texts, task);
-          } else if (input.startsWith("delete ")) {
-            final var idx = Integer.parseInt(input.substring(7)) - 1;
-            if (idx < 0 || idx >= texts.size()) {
-              throw new PeepoException("The task number is out of range.");
-            }
-            final var task = texts.remove(idx);
-            System.out.println(INDENT + "Noted. I've removed this task:");
-            System.out.println(INDENT + "  " + task.toString());
-            System.out.println(INDENT + "Now you have " + texts.size() + " tasks in the list.");
-          } else {
-            throw new PeepoException("I'm sorry, but I don't know what that means.");
-          }
-        } catch (PeepoException e) {
-          System.out.printf(INDENT + "OOPS!!! %s%n", e.getMessage());
+          peepo.handleInput(input);
+        } catch (PeepoException | IOException e) {
+          printError(peepo, e.getMessage());
         }
-        System.out.println(LINE + '\n');
       }
     }
-    System.out.println(LINE);
-    System.out.println(INDENT + "Bye. Hope to see you again soon!");
-    System.out.println(LINE);
+    peepo.farewell();
   }
 }
