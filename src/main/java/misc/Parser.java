@@ -6,6 +6,14 @@ import task.Event;
 import task.Todo;
 
 public class Parser {
+
+    /**
+     * Parses user input and returns the corresponding Command object.
+     *
+     * @param input The user input as a string.
+     * @return A Command object that represents the action to be executed.
+     * @throws PeepoException If the command is unrecognized or the input is invalid.
+     */
     public static Command parse(String input) throws PeepoException {
         final var parts = input.split(" ", 2);
         final var cmd = parts[0];

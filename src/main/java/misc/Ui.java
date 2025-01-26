@@ -38,18 +38,37 @@ public class Ui {
         show(sb.toString());
     }
 
+    /**
+     * Displays a confirmation message indicating that a specific task
+     * has been marked as done.
+     *
+     * @param task The task object that was marked as done.
+     */
     public void showMarkTaskConfirmation(Task task) {
         String sb = "Nice! I've marked this task as done:\n" +
                 "  " + task.toString();
         show(sb);
     }
 
+    /**
+     * Displays a confirmation message indicating that a specific task has been marked
+     * as not done yet.
+     *
+     * @param task The task object that was marked as not done.
+     */
     public void showUnmarkTaskConfirmation(Task task) {
         String sb = "OK, I've marked this task as not done yet:\n" +
                 "  " + task.toString();
         show(sb);
     }
 
+    /**
+     * Displays a confirmation message indicating that a specific task has been deleted
+     * and shows the updated number of tasks remaining in the list.
+     *
+     * @param task The task object that was removed from the list.
+     * @param numTasks The current number of tasks remaining in the list.
+     */
     public void showDeleteConfirmation(Task task, int numTasks) {
         String sb = "Noted. I've removed this task:\n" +
                 "  " + task.toString() + '\n' +
@@ -57,6 +76,11 @@ public class Ui {
         show(sb);
     }
 
+    /**
+     * Displays an error message formatted with a specific prefix to indicate an issue.
+     *
+     * @param message The error message to be displayed.
+     */
     public void showErr(String message) {
         show(String.format("OOPS!!! %s", message));
     }
