@@ -66,7 +66,7 @@ public class Ui {
      * Displays a confirmation message indicating that a specific task has been deleted
      * and shows the updated number of tasks remaining in the list.
      *
-     * @param task The task object that was removed from the list.
+     * @param task     The task object that was removed from the list.
      * @param numTasks The current number of tasks remaining in the list.
      */
     public void showDeleteConfirmation(Task task, int numTasks) {

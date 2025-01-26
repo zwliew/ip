@@ -46,8 +46,8 @@ public class Storage {
      * Each line in the file is parsed into a Task object using the Task.fromFileString method.
      *
      * @return An ArrayList of Task objects loaded from the storage file. If the file is missing
-     *         or unreadable, an empty list is returned.
-     * @throws IOException If an error occurs while reading the file.
+     * or unreadable, an empty list is returned.
+     * @throws IOException    If an error occurs while reading the file.
      * @throws PeepoException If an error occurs while parsing a task from the file.
      */
     public ArrayList<Task> load() throws IOException, PeepoException {

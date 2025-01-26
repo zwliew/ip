@@ -16,7 +16,7 @@ public final class Todo extends Task {
     /**
      * Converts the given input into a Todo.
      *
-     * @param input The description of the Todo.
+     * @param input  The description of the Todo.
      * @param isDone A flag indicating whether the Todo is already completed.
      * @return A Todo created using the provided description and completion status.
      */
